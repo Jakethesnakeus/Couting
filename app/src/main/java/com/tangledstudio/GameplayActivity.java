@@ -9,17 +9,27 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class GameplayActivity extends AppCompatActivity {
-
-    private static int START_VALUE , FINISH_VALUE ;
-    private static int interval;
-    private static int score;
     MainActivity m = new MainActivity();
+    private int START_VALUE;
+    private int FINISH_VALUE;
+    private int interval;;
+    private int score;
+
+    public void loadGameParams() {
+        interval = m.getInterval(this);
+        START_VALUE = m.getStartValue(this);
+        FINISH_VALUE = m.getFinishValue(this);
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gameplay);
+        loadGameParams();
+
         submitAnswer();
+
     }
 
     private String userGuess(){
@@ -44,45 +54,40 @@ public class GameplayActivity extends AppCompatActivity {
         final Button button = (Button) findViewById(R.id.answer);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String msg = "";
-                if(nextNumber() == true){
-                    msg = " Correct answer:";
-
-                } else {
-                    msg = "This is not the next number in the sequence, try again.";
-
-                }
-                Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+                   compareNumbers();
 
             }
         });
     }
 
-    public boolean nextNumber(){
-
+    public boolean compareNumbers(){
         String msg = "";
 
-        if(isUserGuessValid(userGuess())) {
-            while (START_VALUE <= FINISH_VALUE) {
-                START_VALUE += interval;
-                String guess = userGuess();
-                int g2 = Integer.parseInt(guess);
-                while (START_VALUE != 0) {
-                    if (g2 != START_VALUE) {
-                        System.out.println(guess + " is not the next number in the sequence, try again.");
-                        msg = guess + " is not the next number in the sequence, try again.";
-                        return false;
-                    } else {
-                        System.out.println(guess + " is the correct number:");
-                        msg = guess + " is the correct number:";
-                        return true;
-                    }
-                }
-                Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
 
+        String guess = userGuess();
+        int g2 = Integer.parseInt(guess);
+
+        for (int i = START_VALUE; i <= FINISH_VALUE; i += interval){
+
+            if(g2 == nextNumber()){
+                msg = " Correct answer:";
+                Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+                return true;
+            } else {
+                msg = "This is not the next number in the sequence, try again.";
+                Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+                return false;
             }
+
+
         }
         return false;
+    }
+
+    public int nextNumber(){
+        START_VALUE += interval;
+        m.setStartValue(this, START_VALUE);
+        return START_VALUE;
     }
 
 }
