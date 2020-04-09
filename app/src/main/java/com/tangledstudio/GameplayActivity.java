@@ -44,7 +44,7 @@ public class GameplayActivity extends AppCompatActivity {
     private boolean isUserGuessValid(String userAnswer){
         try {
             int number = Integer.parseInt(userAnswer);
-            return (number >= START_VALUE) && (number <= FINISH_VALUE);
+            return (number <= START_VALUE) && (number >= FINISH_VALUE);
         } catch (Exception e) {
             return false;
         }
@@ -55,7 +55,8 @@ public class GameplayActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                    compareNumbers();
-
+                   String userGuess = ((EditText) findViewById(R.id.userGuess)).getText().toString();
+                   ((EditText) findViewById(R.id.userGuess)).getText().clear();
             }
         });
     }
@@ -65,18 +66,18 @@ public class GameplayActivity extends AppCompatActivity {
 
 
         String guess = userGuess();
-        int g2 = Integer.parseInt(guess);
+        isUserGuessValid(guess);
+        int g1 = Integer.parseInt(guess);
 
         for (int i = START_VALUE; i <= FINISH_VALUE; i += interval){
 
-            if(g2 == nextNumber()){
+            if(g1 == nextNumber()){
                 msg = " Correct answer:";
                 Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
                 return true;
             } else {
                 msg = "This is not the next number in the sequence, try again.";
                 Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
-                return false;
             }
 
 
